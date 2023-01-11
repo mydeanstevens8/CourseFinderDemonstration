@@ -1,0 +1,63 @@
+Planning Document
+
+University course finder - User inputs a couple of their hobbies etc and location
+preference.  The system uses this to find appropriate courses.
+
+My interpretation:
+- Hobbies are listed as keywords for the course.
+
+Model:
+
+Course: Class
+ - Physical Course
+ - Online Course
+
+Location
+
+
+Control:
+
+Seq.
+
+View:
+
+
+
+Describing courses:
+
+Course (actual course object)
+- Consists of course name, duration, location, description. Only has Location as an object dependency.
+
+CourseSelector (bunch of keywords - linked to courses) - This system is a brilliant way to abstract and extend upon keywords to
+account for other data, but for purely string-based searches, it would be a bit too expensive. A disadvantage of purely
+string-based searches however, is that it would be difficult to abstract upon and extend.
+- An alternative would be to put the selectors inside the course, but this causes more complexity 
+  and less flexibility in the course data structure.
+- This way was chosen so that Course does not depend on the CourseSelector class. 
+  (We use the principle of reducing UML dependencies).
+
+A CourseSelector consists of a:
+ - Keyword string
+ - Selector type (Enum or otherwise - i.e. hobbies or skills etc.)
+ - A dictionary of Courses as the key (id match for databases instead of referencing in order to reduce memory associations),
+   with a weight value (float/double) for relevance.
+
+   
+Describing locations:
+
+Place: Consists of a name and an exact GPS coordinate.
+
+Location is an abstract class (or maybe an interface), encompassing the below subclasses, and having the following:
+- Availability: A list of available or restricted places
+- AvailabilityType: (available at the above locations or restricted from the above locations - 
+  worldwide courses have this restricted field set but no actual places)
+
+PhysicalLocation, which has:
+	Methods that fetch exact or approximate GPS coordinates, plus the (radial) uncertainty.
+		- Abstract at first
+
+
+The UI:
+
+
+
