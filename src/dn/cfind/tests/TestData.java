@@ -6,8 +6,8 @@ import java.util.*;
 import dn.cfind.*;
 
 public class TestData {
-	protected Set<Course> courses;
-	protected Set<CourseKeyword> keywords;
+	protected Set<Course> courses = Collections.synchronizedSet(new HashSet<Course>());
+	protected Set<CourseKeyword> keywords = Collections.synchronizedSet(new HashSet<CourseKeyword>());
 	
 	// Initialize only by subclasses.
 	protected TestData() {
@@ -19,7 +19,8 @@ public class TestData {
 	}
 	
 	public void export(CourseCollection c) {
-		
+		// Data import auto-manages locations.
+		c.importData(courses, keywords, null);
 	}
 	
 	public static class TestData1 extends TestData {
@@ -27,6 +28,7 @@ public class TestData {
 			
 		}
 		
+		@Override
 		protected void build() {
 			super.build();
 			
@@ -64,7 +66,17 @@ public class TestData {
 			Course camArt = new Course("Bachelor of Arts", "Bachelor of Arts at Camerat Uni", yp3, camUniPlace);
 			Course camEng = new Course("Bachelor of Engineering", "Bachelor of Engineering at Camerat Uni", yp4, camUniPlace);
 			
-			
+			courses.add(akaSci);
+			courses.add(akaArt);
+			courses.add(akaEng);
+
+			courses.add(belSci);
+			courses.add(belArt);
+			courses.add(belEng);
+
+			courses.add(camSci);
+			courses.add(camArt);
+			courses.add(camEng);
 		}
 	}
 	

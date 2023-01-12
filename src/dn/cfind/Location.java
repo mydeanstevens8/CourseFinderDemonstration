@@ -24,4 +24,9 @@ public abstract class Location implements Scorer<Location>, java.io.Serializable
 	public String getName() {
 		return "Location";
 	}
+	
+	public double score(String keyword) {
+		// Depends on unit distance
+		return CourseKeyword.unitDistanceScore(getName(), keyword);
+	}
 }

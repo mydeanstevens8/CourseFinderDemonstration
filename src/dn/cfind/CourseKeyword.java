@@ -47,7 +47,12 @@ public class CourseKeyword implements Scorer<CourseKeyword>, Keyword<Course>, ja
 	@Override
 	public double score(CourseKeyword other) {
 		// Return a comparison between this keyword and the other.
-		return unitDistance(this.keyword, other.keyword);
+		return unitDistanceScore(this.keyword, other.keyword);
+	}
+	
+	public double score(String keyword) {
+		// Return a comparison between this keyword and the other.
+		return unitDistanceScore(this.keyword, keyword);
 	}
 	
 	// Well specified unit distance.
@@ -68,5 +73,10 @@ public class CourseKeyword implements Scorer<CourseKeyword>, Keyword<Course>, ja
 		distanceScore += (maxG - bound);
 		
 		return distanceScore;
+	}
+	
+	static double unitDistanceScore(String s1, String s2) {
+		// Exp-based.
+		return Math.exp(-unitDistance(s1, s2));
 	}
 }
