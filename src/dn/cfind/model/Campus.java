@@ -4,15 +4,16 @@ import java.util.*;
 
 // We advise that subclasses of this class be immutable.
 @ModelObject
-public class Campus implements java.io.Serializable, HasParent<School>, Named.Settable, HasChildren<Set<Course>, Course> {
+public class Campus extends AbstractModelObject 
+	implements HasParent<School>, HasChildren<Set<Course>, Course> {
 
 	private static final long serialVersionUID = -6357650039215274741L;
 	
-	protected String name;
 	private final Set<Course> children;
 	
 	// Bi-directional associations help to speed things up, but they
-	// are harder to maintain.
+	// are harder to maintain. Here we place access control restrictions to
+	// make it easier for us.
 	private School parent;
 	
 	public Campus() {
@@ -24,7 +25,7 @@ public class Campus implements java.io.Serializable, HasParent<School>, Named.Se
 	}
 	
 	public Campus(String name, Collection<Course> courses) {
-		this.name = name;
+		setName(name);
 		// Synchronize to prevent concurrent modification.
 		this.children = Collections.synchronizedSet(new HashSet<>(courses));
 	}
@@ -61,14 +62,6 @@ public class Campus implements java.io.Serializable, HasParent<School>, Named.Se
 		children.clear();
 	}
 	
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
 	@Override
 	public School getParent() {
 		return parent;
@@ -76,5 +69,9 @@ public class Campus implements java.io.Serializable, HasParent<School>, Named.Se
 	
 	void setParent(School parent) {
 		this.parent = parent;
+	}
+	
+	public School getSchool() {
+		return parent;
 	}
 }

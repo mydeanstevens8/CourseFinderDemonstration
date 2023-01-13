@@ -1,34 +1,46 @@
 package dn.cfind.app;
 
 import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+
 import javax.swing.*;
 
-import dn.cfind.*;
-import dn.cfind.tests.TestData;
+import dn.cfind.model.*;
 
 public class CourseFinder {
+	public static final String APP_DEFAULT_MEMORY_LOCATION = "cfind_memory";
+	
 	JFrame uiFrame;
 	FinderPanel fPanel;
+	FinderSystem engine;
+	
+	private static CourseFinder instance = new CourseFinder();
+	
+	// Private constructor - no instantiation but ourselves.
+	private CourseFinder() {
+		engine = new FinderSystem();
+		load();
+	}
+	
+	public static CourseFinder getInstance() {
+		return instance;
+	}
 	
 	// Start!
 	public static void main(String[] args) {
-		CourseFinder f = new CourseFinder();
+		CourseFinder f = getInstance();
 		
-		CourseCollection cc = new CourseCollection();
-		
-		// Import test data
-		TestData test = TestData.getTestData();
-		test.export(cc);
 		
 		if(GraphicsEnvironment.isHeadless()) {
 			// If we are here then a graphical UI is not supported.
 		}
 		else {
-			f.UILaunch(cc);
+			f.UILaunch();
 		}
 	}
 	
-	public void UILaunch(CourseCollection cc) {
+	public void UILaunch() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
@@ -45,7 +57,6 @@ public class CourseFinder {
 		
 		// Add in the components needed.
 		fPanel = new FinderPanel();
-		fPanel.loadData(cc);
 		
 		uiFrame.getContentPane().add(fPanel);
 
@@ -54,8 +65,140 @@ public class CourseFinder {
 		// Center of the screen.
 		uiFrame.setLocationRelativeTo(null);
 		// Always exit on close, even on a Mac.
-		uiFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		uiFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+		uiFrame.addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+				whenDisposed();
+			}
+		});
 		
 		uiFrame.setVisible(true);
+	}
+	
+	protected void autoImportFinder(File override) throws IOException, ClassNotFoundException, ClassCastException {
+		File loc = (override != null)? override : new File(APP_DEFAULT_MEMORY_LOCATION);
+		
+		try {
+			engine = importFinderFromFile(loc);
+		} 
+		catch(FileNotFoundException e) {
+			// Try again with a null file.
+			if(override != null) {
+				autoImportFinder(null);
+			}
+			else {
+				throw e;
+			}
+		} catch(IOException e) {
+			throw e;
+		} catch(ClassNotFoundException | ClassCastException e) {
+			throw e;
+		}
+	}
+	
+	protected void autoExportFinder(File override) throws IOException, ClassCastException {
+		File loc = (override != null)? override : new File(APP_DEFAULT_MEMORY_LOCATION);
+	
+		try {
+			exportFinderToFile(loc, engine);
+		} 
+		catch(FileNotFoundException e) {
+			// Try again with a null file.
+			if(override != null) {
+				autoExportFinder(null);
+			}
+			else {
+				throw e;
+			}
+		} catch(IOException e) {
+			throw e;
+		} catch(ClassCastException e) {
+			throw e;
+		}
+	}
+	
+	public static FinderSystem importFinderFromFile(File file) throws IOException, ClassNotFoundException {
+		FileInputStream fin = null;
+		try {
+			fin = new FileInputStream(file);
+			
+			FinderSystem fs = importFinder(fin);
+			return fs;
+		}
+		finally {
+			if(fin != null) fin.close();
+		}
+	}
+	
+	public static FinderSystem importFinder(InputStream stream) throws IOException, ClassNotFoundException {
+		ObjectInputStream rd = null;
+		try {
+			rd = new ObjectInputStream(stream);
+			
+			Object obj = rd.readObject();
+			
+			// Throws class cast exception when it fails.
+			return (FinderSystem) obj;
+		}
+		finally {
+			if(rd != null) rd.close();
+		}
+	}
+	
+	public static void exportFinder(OutputStream stream, FinderSystem obj) throws IOException {
+		ObjectOutputStream wt = null;
+		try {
+			if(obj == null) return;
+			
+			wt = new ObjectOutputStream(stream);
+			wt.writeObject(obj);
+		}
+		finally {
+			if(wt != null) wt.close();
+		}
+	}
+	
+	public static void exportFinderToFile(File file, FinderSystem obj) throws IOException {
+		FileOutputStream fou = null;
+		try {
+			if(obj == null) return;
+			
+			fou = new FileOutputStream(file);
+			
+			exportFinder(fou, obj);
+		}
+		finally {
+			if(fou != null) fou.close();
+		}
+	}
+	
+	public void load() {
+		try {
+			autoImportFinder(new File(APP_DEFAULT_MEMORY_LOCATION));
+		} catch (ClassNotFoundException | ClassCastException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void save() {
+		try {
+			autoExportFinder(new File(APP_DEFAULT_MEMORY_LOCATION));
+		} catch (ClassCastException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void whenDisposed() {
+		save();
+		System.exit(0);
 	}
 }

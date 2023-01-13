@@ -24,4 +24,15 @@ public interface HasChildren< // ::: Complex generic declaration :::
 	public default boolean hasChild(Type child) {
 		return getChildren().contains(child);
 	}
+	
+	public default boolean addChildren(Collection<Type> children) {
+		boolean modified = false;
+		for(Type c : children) {
+			// Only false when all are false. When one is true,
+			// it is set to true for the rest of the loop.
+			modified |= addChild(c);
+		}
+		
+		return modified;
+	}
 }

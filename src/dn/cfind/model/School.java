@@ -4,13 +4,15 @@ import java.util.*;
 
 // We advise that subclasses of this class be immutable.
 @ModelObject
-public class School implements java.io.Serializable, Named.Settable, HasChildren<Set<Campus>, Campus> {
+public class School extends AbstractModelObject 
+	implements HasChildren<Set<Campus>, Campus>, HasParent<FinderSystem> {
 
 	private static final long serialVersionUID = -5051908614554459288L;
 	
-	private  String name;
 	// "Children" of our school - the campuses.
 	private final Set<Campus> children;
+	
+	private FinderSystem parent;
 
 	public School() {
 		this("School", Collections.emptySet());
@@ -21,7 +23,7 @@ public class School implements java.io.Serializable, Named.Settable, HasChildren
 	}
 	
 	public School(String name, Collection<Campus> campuses) {
-		this.name = name;
+		setName(name);
 		// Synchronize to prevent concurrent modification.
 		this.children = Collections.synchronizedSet(new HashSet<>(campuses));
 	}
@@ -58,14 +60,12 @@ public class School implements java.io.Serializable, Named.Settable, HasChildren
 		children.clear();
 	}
 	
-	@Override
-	public String getName() {
-		return name;
+	public FinderSystem getParent() {
+		return parent;
 	}
 	
-	@Override
-	public void setName(String name) {
-		this.name = name;
+	void setParent(FinderSystem parent) {
+		this.parent = parent;
 	}
 }
 

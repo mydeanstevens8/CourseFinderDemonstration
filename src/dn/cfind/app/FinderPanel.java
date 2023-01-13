@@ -1,27 +1,14 @@
 package dn.cfind.app;
 
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import javax.swing.JTextField;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JButton;
-import javax.swing.border.EmptyBorder;
-import java.awt.Component;
-import javax.swing.Box;
-import javax.swing.border.LineBorder;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.border.*;
 
-import dn.cfind.*;
+import dn.cfind.model.*;
 
-import java.awt.Color;
-import javax.swing.border.CompoundBorder;
-import java.awt.event.KeyEvent;
 import java.util.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import java.awt.GridLayout;
+import java.util.List;
 
 public class FinderPanel extends JPanel {
 
@@ -29,26 +16,16 @@ public class FinderPanel extends JPanel {
 	
 	private final JPanel searchBox = new JPanel();
 	private JTextField searchField;
-	private final JButton searchModeToggle = new JButton("Mode");
 	private final JButton btnGo = new JButton("Go"); 
 	private final JScrollPane resultsScroll = new JScrollPane();
 	
 	private final JPanel results = new JPanel();
 	
-	protected CourseCollection data;
+	protected FinderSystem data;
 	
-	public static enum FindMode {
-		HOBBY("By Hobby"),
-		LOCATION("By Location");
-		
-		public final String description;
-		
-		private FindMode(String description) {
-			this.description = description;
-		}
-	}
+	private Keyword.Category currentFindMode = Keyword.Category.HOBBY;
 	
-	private FindMode currentFindMode = FindMode.HOBBY;
+	private final JComboBox<Keyword.Category> searchModeBox = new JComboBox<>();
 
 	/**
 	 * Create the panel.
@@ -61,22 +38,21 @@ public class FinderPanel extends JPanel {
 		add(searchBox, BorderLayout.NORTH);
 		searchBox.setLayout(new BoxLayout(searchBox, BoxLayout.X_AXIS));
 		
-		JLabel searchLabel = new JLabel("Search: ");
+		JLabel searchLabel = new JLabel("Search by: ");
 		searchBox.add(searchLabel);
 		
 		Component horizontalStrut = Box.createHorizontalStrut(4);
 		searchBox.add(horizontalStrut);
+
+		searchModeBox.setModel(new DefaultComboBoxModel<Keyword.Category>(Keyword.Category.values()));
 		
-		searchModeToggle.setText(currentFindMode.description);
-		searchModeToggle.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				toggleFindMode();
+		searchModeBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				changeSearchMode((Keyword.Category) searchModeBox.getSelectedItem());
 			}
 		});
-		searchModeToggle.setToolTipText("Click to change search mode");
-		searchModeToggle.setMnemonic(KeyEvent.VK_M);
 		
-		searchBox.add(searchModeToggle);
+		searchBox.add(searchModeBox);
 		
 		Component horizontalStrut_1 = Box.createHorizontalStrut(4);
 		searchBox.add(horizontalStrut_1);
@@ -95,11 +71,13 @@ public class FinderPanel extends JPanel {
 		
 		Component horizontalStrut_2 = Box.createHorizontalStrut(4);
 		searchBox.add(horizontalStrut_2);
+		
 		btnGo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				startSearch();
 			}
 		});
+		
 		btnGo.setToolTipText("Click to begin searching");
 		btnGo.setMnemonic(KeyEvent.VK_ENTER);
 		
@@ -112,39 +90,24 @@ public class FinderPanel extends JPanel {
 		results.setLayout(new GridLayout(0, 1, 0, 4)); 
 	}
 	
-	public void toggleFindMode() {
-		switch(currentFindMode) {
-		case HOBBY:
-			changeFindMode(FindMode.LOCATION);
-			break;
-		case LOCATION:
-			changeFindMode(FindMode.HOBBY);
-			break;
-		default:
-			break;
-		}
+	public void changeSearchMode(Keyword.Category newMode) {
+		System.out.println("Search mode changed: " + newMode);
+		currentFindMode = newMode;
 	}
 	
-	public void changeFindMode(FindMode mode) {
-		this.currentFindMode = mode;
-		searchModeToggle.setText(mode.description);
-		
-		// This component then needs to be laid out.
-		searchBox.revalidate();
-	}
-	
-	public void loadData(CourseCollection c) {
-		data = c;
+	public void loadData(FinderSystem data) {
+		this.data = data;
 	}
 	
 	
 	public void startSearch() {
-		startSearchKeyword(searchField.getText());
+		Keyword term = new Keyword(searchField.getText(), currentFindMode);
+		startSearchKeyword(term);
 	}
 	
-	public void startSearchKeyword(String keyword) {
-		System.out.println("Searching using keyword: "+keyword+"...");
-		List<Course> courses = data.provideCourseArrangement(keyword, currentFindMode == FindMode.LOCATION);
+	public void startSearchKeyword(Keyword kw) {
+		System.out.println("Searching using keyword: "+kw.getName()+"...");
+		List<Course> courses = data.getRelevantCourses(kw);
 		
 		fillResults(courses, true, 20);
 	}
@@ -177,7 +140,7 @@ public class FinderPanel extends JPanel {
 	
 	public CourseUI elementForCourse(Course c) {
 		CourseUI newE = new CourseUI();
-		newE.setCUIParam(c.getName(), c.getDescription(), c.getLocation().getName());
+		newE.setCUIParam(c.getName(), "", c.getCampus().getName());
 		
 		return newE;
 	}
