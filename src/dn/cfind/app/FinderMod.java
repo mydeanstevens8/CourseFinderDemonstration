@@ -298,7 +298,7 @@ public class FinderMod extends JPanel {
 	protected void browseKeywords() {
 		changesSinceLastSave = true;
 		if(modelHasKeywords) {
-			// TODO: Implement.
+			KeywordMod.createFrom(this, (Keywordable) model);
 		}
 	}
 	

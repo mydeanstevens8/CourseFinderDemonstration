@@ -176,6 +176,7 @@ public class FinderPanel extends JPanel {
 	protected void buildEditor() {
 		editorFrame = new JFrame("Editor");
 		editorFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		editorFrame.setMinimumSize(new Dimension(500, 400));
 		
 		FinderMod editPanel = new FinderMod(data);
 		
