@@ -2,7 +2,7 @@ package dn.cfind.model;
 
 import java.util.*;
 
-public class FinderSystem implements HasChildren<Set<School>, School>, java.io.Serializable{
+public class FinderSystem implements ModelObject, HasChildren<Set<School>, School>, java.io.Serializable{
 	// Can be saved using a serial UID
 	private static final long serialVersionUID = -7736092820347840766L;
 	
@@ -121,5 +121,14 @@ public class FinderSystem implements HasChildren<Set<School>, School>, java.io.S
 		}
 		
 		return sortedList;
+	}
+	
+	public String getName() {
+		return "System";
+	}
+	
+	@Override
+	public String toString() {
+		return getName();
 	}
 }

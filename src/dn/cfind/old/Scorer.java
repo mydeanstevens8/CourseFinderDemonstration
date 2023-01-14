@@ -1,5 +1,6 @@
-package dn.cfind;
+package dn.cfind.old;
 
+@Deprecated
 public interface Scorer<T> {
 	/**
 	 * Gives a score for the other object when compared with this object.

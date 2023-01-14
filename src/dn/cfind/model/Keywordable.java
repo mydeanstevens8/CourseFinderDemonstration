@@ -24,4 +24,9 @@ public interface Keywordable {
 	// Get the relevance of a particular keyword for this object.
 	// At least 0, and no more than 1.
 	public double getRelevance(Keyword keyword);
+	
+	public default Keyword getSelfKeyword() {
+		// May be null for no such self keyword.
+		return null;
+	}
 }

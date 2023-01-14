@@ -1,4 +1,4 @@
-package dn.cfind;
+package dn.cfind.old;
 
 import java.util.*;
 
@@ -42,6 +42,7 @@ import java.util.*;
  * In effect, each category consists of a set of strings that represent the category.
  * One string will be the default name, and the others are sets of aliases.
  */
+@Deprecated
 public final class KeywordCategory implements java.io.Serializable{
 	private static final long serialVersionUID = 6730312431827614563L;
 

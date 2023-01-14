@@ -1,8 +1,11 @@
-package dn.cfind;
+package dn.cfind.old;
+
+import dn.cfind.GPSValue;
 
 /**
  * GPS-style location involving latitudinal and longitudinal coordinates. 
  */
+@Deprecated
 public class GPSLocation extends PhysicalLocation {
 	private static final long serialVersionUID = 7630898427300648302L;
 	

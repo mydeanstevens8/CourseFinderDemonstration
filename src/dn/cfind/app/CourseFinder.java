@@ -3,6 +3,7 @@ package dn.cfind.app;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.*;
 
@@ -11,9 +12,11 @@ import dn.cfind.model.*;
 public class CourseFinder {
 	public static final String APP_DEFAULT_MEMORY_LOCATION = "cfind_memory";
 	
-	JFrame uiFrame;
-	FinderPanel fPanel;
-	FinderSystem engine;
+	private JFrame uiFrame;
+	private FinderPanel fPanel;
+	private FinderSystem engine;
+	
+	private static Thread EventDispatchThread;
 	
 	private static CourseFinder instance = new CourseFinder();
 	
@@ -31,12 +34,28 @@ public class CourseFinder {
 	public static void main(String[] args) {
 		CourseFinder f = getInstance();
 		
-		
 		if(GraphicsEnvironment.isHeadless()) {
 			// If we are here then a graphical UI is not supported.
 		}
 		else {
-			f.UILaunch();
+			try {
+				EventQueue.invokeAndWait(new Runnable() {
+					public void run() {
+						f.UILaunch();
+						EventDispatchThread = Thread.currentThread();
+					}
+				});
+				
+				EventDispatchThread.join();
+				
+				
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -57,6 +76,7 @@ public class CourseFinder {
 		
 		// Add in the components needed.
 		fPanel = new FinderPanel();
+		fPanel.loadData(engine);
 		
 		uiFrame.getContentPane().add(fPanel);
 
@@ -82,6 +102,8 @@ public class CourseFinder {
 		});
 		
 		uiFrame.setVisible(true);
+		
+		fPanel.startSearch();
 	}
 	
 	protected void autoImportFinder(File override) throws IOException, ClassNotFoundException, ClassCastException {

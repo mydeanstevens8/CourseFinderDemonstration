@@ -1,4 +1,4 @@
-package dn.cfind;
+package dn.cfind.old;
 
 import java.time.*;
 import java.util.*;
@@ -14,6 +14,7 @@ import java.util.*;
  * and extra functionality that could be represented by subclasses, it was not done. If I made
  * this class immutable, I would have had no guarantee that subclasses would also be immutable.
  */
+@Deprecated
 public class Course implements Scorer<Location>, java.io.Serializable {
 	private static final long serialVersionUID = -6008413049023996209L;
 

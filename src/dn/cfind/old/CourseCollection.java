@@ -1,7 +1,8 @@
-package dn.cfind;
+package dn.cfind.old;
 
 import java.util.*;
 
+@Deprecated
 public class CourseCollection implements java.io.Serializable{
 	private static final long serialVersionUID = 5696940639305313304L;
 	

@@ -2,7 +2,8 @@ package dn.cfind.model;
 
 import java.util.*;
 
-@ModelObject
+import dn.cfind.Debug;
+
 public class Course extends AbstractModelObject implements HasParent<Campus> {
 
 	private static final long serialVersionUID = -7726549459538737449L;
@@ -33,6 +34,8 @@ public class Course extends AbstractModelObject implements HasParent<Campus> {
 	}
 	
 	public double getTotalRelevance(Keyword kw) {
+		Debug.out.println("Computing relevance for "+this);
+		
 		double campusRelevance = 0;
 		double schoolRelevance = 0;
 		if(getCampus() != null) {
@@ -44,7 +47,11 @@ public class Course extends AbstractModelObject implements HasParent<Campus> {
 				schoolRelevance = grandparent.getRelevance(kw);
 			}
 		}
-		return Math.max(this.getRelevance(kw), Math.max(campusRelevance, schoolRelevance));
+		double total = Math.max(this.getRelevance(kw), Math.max(campusRelevance, schoolRelevance));
+		
+		Debug.out.println("Total relevance for " + this + ": "+total);
+		
+		return total;
 	}
 	
 	public Campus getCampus() {

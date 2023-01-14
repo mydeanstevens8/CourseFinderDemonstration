@@ -1,11 +1,10 @@
 package dn.cfind.model;
 
-import java.util.Collections;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
 
-@ModelObject
-public abstract class AbstractModelObject implements java.io.Serializable, Keywordable, Named.Settable {
+import dn.cfind.Debug;
+
+public abstract class AbstractModelObject implements ModelObject, java.io.Serializable, Keywordable, Named.Settable {
 	private static final long serialVersionUID = -6426989652706888674L;
 	
 	private String name;
@@ -62,8 +61,14 @@ public abstract class AbstractModelObject implements java.io.Serializable, Keywo
 			// score between the given keyword and the keyword being compared.
 			// Minimum 0 and maximum 1.
 			double computedScore = ours.getValue() * ours.getKey().matchScore(keyword);
+			Debug.out.println("\tComputation for "+this+" -> "+ours+": "+computedScore);
 			maximumScore = Math.max(maximumScore, computedScore);
 		}
+		
+		// Also get our self keyword and match
+		double selfMatch = getSelfKeyword().matchScore(keyword);
+		Debug.out.println("\tSelf-match for "+this+": "+selfMatch);
+		maximumScore = Math.max(maximumScore, selfMatch);
 		
 		return maximumScore;
 	}
@@ -71,5 +76,16 @@ public abstract class AbstractModelObject implements java.io.Serializable, Keywo
 	@Override
 	public void addKeywords(Map<Keyword, Double> keywords) {
 		this.keywords.putAll(keywords);
+	}
+	
+	// This is for our UI to display them properly.
+	@Override
+	public String toString() {
+		return getName();
+	}
+	
+	@Override
+	public Keyword getSelfKeyword() {
+		return new Keyword(name, Keyword.Category.NAME);
 	}
 }

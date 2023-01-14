@@ -3,8 +3,10 @@ package dn.cfind.tests;
 import java.time.Period;
 import java.util.*;
 
-import dn.cfind.*;
+import dn.cfind.GPSValue;
+import dn.cfind.old.*;
 
+@Deprecated
 public class TestData {
 	protected Set<Course> courses = Collections.synchronizedSet(new HashSet<Course>());
 	protected Set<CourseKeyword> keywords = Collections.synchronizedSet(new HashSet<CourseKeyword>());
@@ -22,7 +24,8 @@ public class TestData {
 		// Data import auto-manages locations.
 		c.importData(courses, keywords, null);
 	}
-	
+
+	@Deprecated
 	public static class TestData1 extends TestData {
 		protected TestData1() {
 			

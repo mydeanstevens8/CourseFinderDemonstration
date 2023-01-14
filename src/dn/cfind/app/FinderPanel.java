@@ -5,6 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import dn.cfind.Debug;
 import dn.cfind.model.*;
 
 import java.util.*;
@@ -23,9 +24,14 @@ public class FinderPanel extends JPanel {
 	
 	protected FinderSystem data;
 	
-	private Keyword.Category currentFindMode = Keyword.Category.HOBBY;
+	private Keyword.Category currentFindMode = Keyword.Category.GENERAL;
 	
 	private final JComboBox<Keyword.Category> searchModeBox = new JComboBox<>();
+	
+	private final JPanel editor = new JPanel();
+	private final JButton editorBtn = new JButton("Open Editor");
+	
+	private JFrame editorFrame;
 
 	/**
 	 * Create the panel.
@@ -88,10 +94,21 @@ public class FinderPanel extends JPanel {
 		
 		resultsScroll.setViewportView(results);
 		results.setLayout(new GridLayout(0, 1, 0, 4)); 
+		
+		add(editor, BorderLayout.SOUTH);
+		editorBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openEditor();
+			}
+		});
+		
+		editor.add(editorBtn);
+		
+		changeSearchMode((Keyword.Category) searchModeBox.getSelectedItem());
 	}
 	
 	public void changeSearchMode(Keyword.Category newMode) {
-		System.out.println("Search mode changed: " + newMode);
+		Debug.out.println("Search mode changed: " + newMode);
 		currentFindMode = newMode;
 	}
 	
@@ -106,7 +123,7 @@ public class FinderPanel extends JPanel {
 	}
 	
 	public void startSearchKeyword(Keyword kw) {
-		System.out.println("Searching using keyword: "+kw.getName()+"...");
+		Debug.out.println("Searching using keyword: "+kw.getName()+"...");
 		List<Course> courses = data.getRelevantCourses(kw);
 		
 		fillResults(courses, true, 20);
@@ -135,14 +152,36 @@ public class FinderPanel extends JPanel {
 			results.add(dummy);
 		}
 		
+		results.add(Box.createVerticalGlue());
+		
 		results.revalidate();
 	}
 	
 	public CourseUI elementForCourse(Course c) {
 		CourseUI newE = new CourseUI();
-		newE.setCUIParam(c.getName(), "", c.getCampus().getName());
+		String genDesc = c.getName() + " at " + c.getCampus().getName() + " at " + c.getCampus().getSchool().getName();
+		String genLoc = c.getCampus().getSchool().getName();
+		newE.setCUIParam(c.getName(), genDesc, genLoc);
 		
 		return newE;
 	}
 
+	public void openEditor() {
+		// Create another frame and center it on this panel.
+		if(editorFrame == null) buildEditor();
+		
+		editorFrame.setVisible(true);
+	}
+	
+	protected void buildEditor() {
+		editorFrame = new JFrame("Editor");
+		editorFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		
+		FinderMod editPanel = new FinderMod(data);
+		
+		editorFrame.getContentPane().add(editPanel);
+		
+		editorFrame.pack();
+		editorFrame.setLocationRelativeTo(this); // Hovering over our frame.
+	}
 }

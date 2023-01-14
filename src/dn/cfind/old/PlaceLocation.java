@@ -1,5 +1,8 @@
-package dn.cfind;
+package dn.cfind.old;
 
+import dn.cfind.GPSValue;
+
+@Deprecated
 public class PlaceLocation extends PhysicalLocation {
 	private static final long serialVersionUID = 4525335206247879048L;
 	

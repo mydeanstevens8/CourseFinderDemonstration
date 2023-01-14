@@ -1,7 +1,8 @@
-package dn.cfind;
+package dn.cfind.old;
 
 import java.util.*;
 
+@Deprecated
 public class CourseKeyword implements Scorer<CourseKeyword>, Keyword<Course>, java.io.Serializable {
 	private static final long serialVersionUID = 6072914850210484261L;
 

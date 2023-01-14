@@ -1,5 +1,8 @@
-package dn.cfind;
+package dn.cfind.old;
 
+import dn.cfind.GPSValue;
+
+@Deprecated
 public class Place implements java.io.Serializable{
 	private static final long serialVersionUID = -7802924797338907397L;
 

@@ -1,12 +1,14 @@
 package dn.cfind.model;
 
-@ModelObject
+import dn.cfind.Debug;
+
 // Advised to be immutable.
-public final class Keyword implements Named, java.io.Serializable {
+public final class Keyword implements ModelObject, Named, java.io.Serializable {
 	private static final long serialVersionUID = 1538581074252626583L;
 
 	public static enum Category {
 		GENERAL("General"),
+		NAME("Name"),
 		HOBBY("Hobby"),
 		PLACE("Place");
 		
@@ -70,27 +72,49 @@ public final class Keyword implements Named, java.io.Serializable {
 
 	// A score from 0 to 1 describing how well the keyword matches with the other
 	public double matchScore(Keyword other) {
-		if(this.getCategory() != other.getCategory()) {
-			return 0;  // Different categories are incompatible.
+		if((other.getCategory() != Keyword.Category.GENERAL) && (this.getCategory() != other.getCategory())) {
+			Debug.out.println("\t\tIncompatible categories: my "+this.getCategory() + " vs. your "+ other.getCategory());
+			return 0;  // Different categories are incompatible, except with the GENERAL category.
 		}
 		
-		String tn = this.getName();
-		String on = other.getName();
+		// Non-case sensitive.
+		String tn = this.getName().toLowerCase();
+		String on = other.getName().toLowerCase();
 		
-		int diffs = 0;
+		// Perform some search.
+		int diffs = performSearch(tn, on);
 		
-		for(int i = 0; i < Math.min(tn.length(), on.length()); i++) {
-			// Measure differences here
-			if(tn.charAt(i) != on.charAt(i)) diffs++;
-		}
+		Debug.out.println("\t\tFinal diff score: "+diffs);
 		
 		// The more differences we have, the lower our score.
 		// TODO: Abstract the scoring function.
-		double result = Math.pow(1/2, diffs);
+		double result = Math.pow(1.0/2.0, diffs);
 		
 		assert (result >= 0 && result <= 1): "Result out of range!";
 		
 		return result;
+	}
+	
+	private static int performSearch(String tn, String on) {
+		// We wish to find a string in another - Ukkonnen's algorithm can help us!
+		// Unfortunately, it is very complicated and could be attempted another time.
+		
+		// Execute only when length is not zero.
+		int diffs = Math.min(tn.length(), on.length());
+		
+		for(int i = 0; i < tn.length(); i++) {
+			// Measure local differences. Keywords must match contiguously.
+			int localDiffs = Math.min(tn.length(), on.length());
+			for(int j = 0; (j < on.length()) && (i+j) < tn.length(); j++) {
+				if(tn.charAt(i+j) == on.charAt(j)) {
+					localDiffs--;
+				}
+			}
+			
+			diffs = Math.min(localDiffs, diffs);
+		}
+		
+		return diffs;
 	}
 	
 	public static double matchScore(Keyword k1, Keyword k2) {

@@ -1,6 +1,7 @@
-package dn.cfind;
+package dn.cfind.old;
 
 
+@Deprecated
 public class VirtualLocation extends Location {
 	private static final long serialVersionUID = 8569827092895855954L;
 

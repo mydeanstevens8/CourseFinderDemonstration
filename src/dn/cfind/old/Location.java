@@ -1,4 +1,4 @@
-package dn.cfind;
+package dn.cfind.old;
 
 /**
  * <p>
@@ -16,6 +16,7 @@ package dn.cfind;
  * hypothetical Locatable interface), this should be an abstract class instead of an
  * interface.
  */
+@Deprecated
 public abstract class Location implements Scorer<Location>, java.io.Serializable{
 	private static final long serialVersionUID = 4973856784001602516L;
 	

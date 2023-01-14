@@ -1,4 +1,6 @@
-package dn.cfind;
+package dn.cfind.old;
+
+import dn.cfind.GPSValue;
 
 /**
  * A physical location describes a location in physical space.
@@ -6,6 +8,7 @@ package dn.cfind;
  * @author deanstevens
  *
  */
+@Deprecated
 public abstract class PhysicalLocation extends Location {
 	private static final long serialVersionUID = -1853325471392855325L;
 

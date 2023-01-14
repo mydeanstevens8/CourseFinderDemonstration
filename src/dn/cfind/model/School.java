@@ -3,7 +3,6 @@ package dn.cfind.model;
 import java.util.*;
 
 // We advise that subclasses of this class be immutable.
-@ModelObject
 public class School extends AbstractModelObject 
 	implements HasChildren<Set<Campus>, Campus>, HasParent<FinderSystem> {
 
