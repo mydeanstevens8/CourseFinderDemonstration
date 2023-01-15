@@ -110,6 +110,8 @@ public class FinderMod extends JPanel {
 		essentials.setLayout(new BorderLayout(0, 0));
 		
 		JPanel title = new JPanel();
+		title.setForeground(UIManager.getColor("TextField.light"));
+		title.setBackground(UIManager.getColor("Panel.foreground"));
 		title.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(128, 128, 128)));
 		FlowLayout flowLayout = (FlowLayout) title.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
@@ -126,6 +128,8 @@ public class FinderMod extends JPanel {
 		title.add(back);
 		
 		titleLab = new JLabel("Editing: Title");
+		titleLab.setBackground(UIManager.getColor("Panel.foreground"));
+		titleLab.setForeground(UIManager.getColor("TextField.light"));
 		title.add(titleLab);
 		
 		JPanel params = new JPanel();

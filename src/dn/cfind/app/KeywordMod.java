@@ -301,7 +301,7 @@ public class KeywordMod extends JPanel {
 		JDialog container = new JDialog(ancestor, "Edit Keywords");
 		
 		container.setResizable(true);
-		container.setModalityType(ModalityType.MODELESS);
+		container.setModalityType(ModalityType.APPLICATION_MODAL);
 		container.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		
 		KeywordMod newMod = new KeywordMod(kw);
