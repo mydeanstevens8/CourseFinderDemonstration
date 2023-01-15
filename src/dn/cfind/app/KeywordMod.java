@@ -12,8 +12,7 @@ import java.util.*;
 import java.util.List;
 
 import dn.cfind.model.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
 
 public class KeywordMod extends JPanel {
 	// A table model useful for modifiying keyword entries.
@@ -302,7 +301,23 @@ public class KeywordMod extends JPanel {
 		
 		container.setResizable(true);
 		container.setModalityType(ModalityType.APPLICATION_MODAL);
-		container.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		container.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		
+		// When closed, open the create lock.
+		container.addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+				createLock = false;
+			}
+
+			
+		});
 		
 		KeywordMod newMod = new KeywordMod(kw);
 		
